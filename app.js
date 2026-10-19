@@ -795,6 +795,8 @@ function renderSteps() {
         "↓",
         index === steps.length - 1,
       ),
+      // Duplicate button: inserts a copy immediately after the original
+      createControlButton("duplicate", step.id, `Duplicate ${step.name}`, "⧉", false),
       createControlButton("delete", step.id, "Delete step", "×", false, true),
     );
 
@@ -967,6 +969,21 @@ stepList.addEventListener("click", (event) => {
 
   if (button.dataset.action === "edit") {
     openStepDialog(steps[index]);
+    return;
+  }
+
+  // Handle duplication: insert a deep copy immediately after the original
+  if (button.dataset.action === "duplicate") {
+    const original = steps[index];
+    const clone = {
+      id: createStepId(steps),
+      type: original.type,
+      name: original.name,
+      properties: JSON.parse(JSON.stringify(original.properties || {})),
+    };
+    steps.splice(index + 1, 0, clone);
+    renderSteps();
+    saveWorkflow();
     return;
   }
 
