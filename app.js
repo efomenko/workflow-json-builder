@@ -785,6 +785,11 @@ function renderSteps() {
     const controls = document.createElement("div");
     controls.className = "step-controls";
     controls.setAttribute("aria-label", `Controls for ${step.name}`);
+
+    // Determine whether duplicating this step would create a second trigger
+    const otherTriggerExists = steps.some((s) => s.type === "trigger" && s.id !== step.id);
+    const duplicateDisabled = step.type === "trigger" && otherTriggerExists;
+
     controls.append(
       createControlButton("edit", step.id, `Edit ${step.name}`, "✎", false),
       createControlButton("move-up", step.id, "Move step up", "↑", index === 0),
@@ -796,7 +801,7 @@ function renderSteps() {
         index === steps.length - 1,
       ),
       // Duplicate button: inserts a copy immediately after the original
-      createControlButton("duplicate", step.id, `Duplicate ${step.name}`, "⧉", false),
+      createControlButton("duplicate", step.id, `Duplicate ${step.name}", "⧉", duplicateDisabled),
       createControlButton("delete", step.id, "Delete step", "×", false, true),
     );
 
@@ -810,7 +815,9 @@ function renderSteps() {
 // Keep the repeated button markup in one place and attach action details as data.
 function createControlButton(action, id, label, text, disabled, isDelete = false) {
   const button = document.createElement("button");
-  button.className = `icon-button${isDelete ? " delete-button" : ""}`;
+  // Add a specific class for duplicate buttons to allow targeted styling
+  const extraClass = isDelete ? " delete-button" : action === "duplicate" ? " duplicate-button" : "";
+  button.className = `icon-button${extraClass}`;
   button.type = "button";
   button.dataset.action = action;
   button.dataset.stepId = id;
@@ -975,6 +982,13 @@ stepList.addEventListener("click", (event) => {
   // Handle duplication: insert a deep copy immediately after the original
   if (button.dataset.action === "duplicate") {
     const original = steps[index];
+    // If this duplicate button was disabled, user cannot click it — but guard anyway
+    const otherTriggerExists = steps.some((s) => s.type === "trigger" && s.id !== original.id);
+    if (original.type === "trigger" && otherTriggerExists) {
+      showAppFeedback("Cannot duplicate this trigger because the workflow already contains another trigger.");
+      return;
+    }
+
     const clone = {
       id: createStepId(steps),
       type: original.type,
@@ -984,6 +998,9 @@ stepList.addEventListener("click", (event) => {
     steps.splice(index + 1, 0, clone);
     renderSteps();
     saveWorkflow();
+
+    // Open the new step for immediate editing
+    openStepDialog(clone);
     return;
   }
 
