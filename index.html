@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta
+      name="description"
+      content="Create and organize simple IT automation workflows."
+    >
+    <title>Workflow JSON Builder</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="Workflow JSON Builder home">
+          <span class="brand-mark" aria-hidden="true">W</span>
+          <span>Workflow Builder</span>
+        </a>
+        <span class="local-badge">
+          <span class="status-dot" aria-hidden="true"></span>
+          Browser-based workspace
+        </span>
+      </header>
+
+      <section class="page-heading" aria-labelledby="page-title">
+        <div>
+          <p class="eyebrow">IT AUTOMATION · WORKSPACE</p>
+          <h1 id="page-title">Build a workflow</h1>
+          <p class="page-intro">
+            Bring your automation ideas together, one step at a time.
+          </p>
+        </div>
+        <div class="file-actions" aria-label="Workflow file actions">
+          <button class="button button-secondary" id="import-json-button" type="button">
+            <span aria-hidden="true">↥</span>
+            Import JSON
+          </button>
+          <input
+            class="visually-hidden"
+            id="import-json-file"
+            type="file"
+            accept=".json,application/json"
+            tabindex="-1"
+            aria-label="Choose a workflow JSON file"
+          >
+          <button
+            class="button button-secondary"
+            id="export-json-button"
+            type="button"
+          >
+            <span aria-hidden="true">↓</span>
+            Export JSON
+          </button>
+          <button
+            class="button button-secondary button-example"
+            id="load-example-button"
+            type="button"
+          >
+            <span aria-hidden="true">✦</span>
+            Load Example Workflow
+            <span class="demo-tag">DEMO</span>
+          </button>
+          <button
+            class="button button-secondary button-clear"
+            id="clear-workflow-button"
+            type="button"
+          >
+            Clear Workflow
+          </button>
+        </div>
+      </section>
+
+      <div class="import-feedback" id="app-feedback" role="status" hidden></div>
+
+      <section class="workflow-card" aria-labelledby="workflow-details-title">
+        <div class="section-heading">
+          <div class="section-icon" aria-hidden="true">01</div>
+          <div>
+            <h2 id="workflow-details-title">Workflow details</h2>
+            <p>Give your workflow a name and a little context.</p>
+          </div>
+        </div>
+
+        <div class="workflow-fields">
+          <div class="field">
+            <label for="workflow-name">Workflow name</label>
+            <input
+              id="workflow-name"
+              name="workflow-name"
+              type="text"
+              placeholder="e.g. New employee onboarding"
+            >
+          </div>
+          <div class="field">
+            <label for="workflow-description">Description</label>
+            <textarea
+              id="workflow-description"
+              name="workflow-description"
+              rows="3"
+              placeholder="What should this workflow help automate?"
+            ></textarea>
+          </div>
+        </div>
+      </section>
+
+      <section
+        class="validation-panel"
+        id="validation-panel"
+        aria-labelledby="validation-title"
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        <div class="validation-heading">
+          <span class="validation-icon" id="validation-icon" aria-hidden="true">!</span>
+          <div>
+            <h2 id="validation-title">Workflow validation</h2>
+            <p id="validation-summary"></p>
+          </div>
+        </div>
+        <ul class="validation-errors" id="validation-errors"></ul>
+      </section>
+
+      <section class="steps-section" aria-labelledby="steps-title">
+        <div class="steps-heading">
+          <div class="section-heading">
+            <div class="section-icon" aria-hidden="true">02</div>
+            <div>
+              <h2 id="steps-title">Workflow steps</h2>
+              <p>Your automation will run through these steps in order.</p>
+            </div>
+          </div>
+          <button class="button button-primary" id="add-step-button" type="button">
+            <span aria-hidden="true">+</span>
+            Add step
+          </button>
+        </div>
+
+        <div class="empty-state" id="empty-state">
+          <div class="empty-icon" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <h3>Your workflow is just getting started</h3>
+          <p>Add a step to start shaping your automation.</p>
+        </div>
+        <ol class="step-list" id="step-list" aria-live="polite"></ol>
+      </section>
+
+      <dialog class="step-dialog" id="step-dialog" aria-labelledby="dialog-title">
+        <form class="step-form" id="step-form">
+          <div class="dialog-heading">
+            <div>
+              <p class="eyebrow">WORKFLOW STEP</p>
+              <h2 id="dialog-title">Add a step</h2>
+            </div>
+            <button
+              class="dialog-close"
+              id="close-dialog-button"
+              type="button"
+              aria-label="Close dialog"
+            >×</button>
+          </div>
+
+          <div class="field">
+            <label for="step-type">Step type</label>
+            <select id="step-type" name="type">
+              <option value="trigger">Trigger</option>
+              <option value="condition">Condition</option>
+              <option value="action">Action</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="step-name">Step name</label>
+            <input
+              id="step-name"
+              name="name"
+              type="text"
+              placeholder="e.g. Start when a ticket is created"
+            >
+          </div>
+
+          <div class="property-fields" id="property-fields"></div>
+
+          <div class="dialog-actions">
+            <button class="button button-secondary" id="cancel-step-button" type="button">
+              Cancel
+            </button>
+            <button class="button button-primary" id="save-step-button" type="submit">
+              Save step
+            </button>
+          </div>
+        </form>
+      </dialog>
+
+      <footer class="app-footer">
+        <span>Workflow JSON Builder</span>
+        <span>Simple automation, clearly organized.</span>
+      </footer>
+    </main>
+  </body>
+</html>

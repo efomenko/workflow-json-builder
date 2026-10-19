@@ -1,0 +1,25 @@
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# Editor settings and local scratch files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+npm-debug.log*
+
+# Dependency folders that may appear if the app grows
+node_modules/
+
+# Build output if the app is later bundled or minified
+dist/
+build/
+coverage/
