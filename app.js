@@ -801,7 +801,7 @@ function renderSteps() {
         index === steps.length - 1,
       ),
       // Duplicate button: inserts a copy immediately after the original
-      createControlButton("duplicate", step.id, `Duplicate ${step.name}", "⧉", duplicateDisabled),
+      createControlButton("duplicate", step.id, `Duplicate ${step.name}`, "⧉", duplicateDisabled),
       createControlButton("delete", step.id, "Delete step", "×", false, true),
     );
 
